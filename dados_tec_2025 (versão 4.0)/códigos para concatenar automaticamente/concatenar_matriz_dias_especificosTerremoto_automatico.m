@@ -3,10 +3,10 @@ close all;
 clc;
 
 % =========================================================================
-% 1. SELE«√O AUTOM¡TICA DA PASTA E ARQUIVOS
+% 1. SELE√á√ÉO AUTOM√ÅTICA DA PASTA E ARQUIVOS
 % =========================================================================
-selPath = uigetdir(pwd, 'Selecione a pasta com os arquivos .txt das estaÁıes'); % abre uma janela no gerenciador de arquivos para o usu·rio escolher o caminho dos dados
-if isequal(selPath, 0), return; end % se o usu·rio fechar a janela, o programa encerra aqui
+selPath = uigetdir(pwd, 'Selecione a pasta com os arquivos .txt das esta√ß√µes'); % abre uma janela no gerenciador de arquivos para o usu√°rio escolher o caminho dos dados
+if isequal(selPath, 0), return; end % se o usu√°rio fechar a janela, o programa encerra aqui
 
 % lista todos os arquivos .txt na pasta
 fileData = dir(fullfile(selPath, '*.txt'));
@@ -18,12 +18,12 @@ if isempty(fileList)
 end
 
 % =========================================================================
-% 2. CONFIGURA«’ES DOS DIAS
+% 2. CONFIGURA√á√ïES DOS DIAS
 % =========================================================================
 dias_escolhidos = [22]; % dia escolhido (nesse caso foi o dia do evento)
-horas_por_dia = 1440; % 1440 pontos em um dia, porque È um dado por minuto (60 x 24)
-num_total_dias = 31; % total de dias do mÍs em cada arquivo
-teste = []; % matriz final onde ser„o salvos os dados de todas estaÁıes
+horas_por_dia = 1440; % 1440 pontos em um dia, porque √© um dado por minuto (60 x 24)
+num_total_dias = 31; % total de dias do m√™s em cada arquivo
+teste = []; % matriz final onde ser√£o salvos os dados de todas esta√ß√µes
 
 % =========================================================================
 % 3. LOOP DE PROCESSAMENTO
@@ -31,35 +31,35 @@ teste = []; % matriz final onde ser„o salvos os dados de todas estaÁıes
 for i = 1:length(fileList)
     currentFile = fullfile(selPath, fileList{i}); % caminho completo do arquivo atual
     fileList{i} % printa o nome do arquivo no console
-    fprintf('Processando arquivo %d de %d: %s\n', i, length(fileList), fileList{i}); % mensagem de atualizaÁ„o de qual arquivo est· sendo processado naquele momento
+    fprintf('Processando arquivo %d de %d: %s\n', i, length(fileList), fileList{i}); % mensagem de atualiza√ß√£o de qual arquivo est√° sendo processado naquele momento
 
     fid = fopen(currentFile, 'rt'); % abre o arquivo para leitura
     
-    % condicional para se caso der problema no arquivo atual, pula para o prÛximo
+    % condicional para se caso der problema no arquivo atual, pula para o pr√≥ximo
     if fid == -1
         fprintf('Erro ao abrir: %s\n', fileList{i});
         continue
     end
 
-    % lÍ o conte˙do do arquivo e pula o cabeÁalho, lÍ linha por linha e pula a primeira
+    % l√™ o conte√∫do do arquivo e pula o cabe√ßalho, l√™ linha por linha e pula a primeira
     raw_data = textscan(fid, '%s', 'Delimiter', '\n', 'HeaderLines', 1);
     fclose(fid);
 
-    % tratamento de decimal e para valores inv·lidos
+    % tratamento de decimal e para valores inv√°lidos
     clean_raw = strrep(raw_data{1}, ',', '.');
     clean_raw = strrep(clean_raw, '-999.0', 'NaN');
 
-    % converte para matriz numÈrica
+    % converte para matriz num√©rica
     try
-        data = cell2mat(cellfun(@str2num, clean_raw, 'UniformOutput', false)); % converte de texto para n˙mero
+        data = cell2mat(cellfun(@str2num, clean_raw, 'UniformOutput', false)); % converte de texto para n√∫mero
     catch
-        fprintf('Erro na convers„o numÈrica do arquivo %s. Pulando.\n', fileList{i});
+        fprintf('Erro na convers√£o num√©rica do arquivo %s. Pulando.\n', fileList{i});
         continue;
     end
 
     % processamento TEC
-    media = data(:, 1); % primeira coluna È a mÈdia
-    vtec_data = data(:, 5:2:end); % pega as colunas de VTEC (entre os dias 1 a 31, e pulando de 2 em 2, porque uma coluna È de hora, e a outra È de TEC)
+    media = data(:, 1); % primeira coluna √© a m√©dia
+    vtec_data = data(:, 5:2:end); % pega as colunas de VTEC (entre os dias 1 a 31, e pulando de 2 em 2, porque uma coluna √© de hora, e a outra √© de TEC)
     
     % lineariza os 31 dias (transforma a matriz em um vetor coluna longo)
     % usa vtec_cols' (transposta) garante que o reshape siga a ordem dos dias corretamente
@@ -68,19 +68,19 @@ for i = 1:length(fileList)
                  vtec_data(:,21); vtec_data(:,22); vtec_data(:,23); vtec_data(:,24); vtec_data(:,25); vtec_data(:,26);vtec_data(:,27); vtec_data(:,28); vtec_data(:,29); vtec_data(:,30);...
                  vtec_data(:,31)];
     
-    % expande a mÈdia para bater com o tamanho dos 31 dias
+    % expande a m√©dia para bater com o tamanho dos 31 dias
     media_expand = repmat(media, num_total_dias, 1);
 
-    % calcula a diferenÁa do TEC em relaÁ„o ‡ mÈdia  
+    % calcula a diferen√ßa do TEC em rela√ß√£o √† m√©dia  
     diff_TEC = vtec_data - media_expand;
     
-%     plot(vtec_data) % esse plot È apenas para verificar se o cÛdigo est· funcionando corretamente (porque se colocar reshape no vtec_data, d· errado)
+%     plot(vtec_data) % esse plot √© apenas para verificar se o c√≥digo est√° funcionando corretamente (porque se colocar reshape no vtec_data, d√° errado)
 %     return
 
-    % extraÁ„o dos dias escolhidos
+    % extra√ß√£o dos dias escolhidos
     idx_final = [];
     
-    % esse for vai calcular os Ìndices do dia escolhido (nesse caso, o dia 22, por exemplo)
+    % esse for vai calcular os √≠ndices do dia escolhido (nesse caso, o dia 22, por exemplo)
     for d = dias_escolhidos 
         inicio = (d-1)*horas_por_dia + 1;
         fim = d*horas_por_dia;
@@ -98,10 +98,10 @@ end
 % =========================================================================
 % 4. SALVAMENTO
 % =========================================================================
-output_folder = fullfile(selPath, 'dados formatados'); % cria uma pasta chamada "dados formatados" caso ela ainda n„o exista
+output_folder = fullfile(selPath, 'dados formatados'); % cria uma pasta chamada "dados formatados" caso ela ainda n√£o exista
 if ~exist(output_folder, 'dir'), mkdir(output_folder); end
 
-% cria o nome do arquivo que indica quais dias foram extraÌdos, por exemplo, "matrix_diffTEC_Aug2025_terremoto22"
+% cria o nome do arquivo que indica quais dias foram extra√≠dos, por exemplo, "matrix_diffTEC_Aug2025_terremoto22"
 dias_str = sprintf('%d_', dias_escolhidos);
 output_name = ['matrix_diffTEC_Aug2025_terremoto', dias_str(1:end-1), '.txt'];
 output_file = fullfile(output_folder, output_name);
