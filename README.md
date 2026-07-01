@@ -304,9 +304,3 @@ A metodologia implementada neste repositório baseia-se em
 **Laura Trigo**
 
 Projeto desenvolvido durante a graduação em **Engenharia da Computação**, com foco na investigação de perturbações ionosféricas induzidas por terremotos utilizando observações GNSS.
-
----
-
-# 📜 Licença
-
-Este projeto possui fins **acadêmicos e científicos**.
